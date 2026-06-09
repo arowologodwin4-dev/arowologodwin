@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__,
+                template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
+                static_folder=os.path.join(os.path.dirname(__file__), 'static'))
+
     app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret")
 
     from .routes.auth import auth_bp
