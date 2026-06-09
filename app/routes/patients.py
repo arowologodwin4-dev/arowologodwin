@@ -4,14 +4,6 @@ from ..auth_utils import login_required, get_current_user
 
 patients_bp = Blueprint("patients", __name__, url_prefix="/patients")
 
-def get_db():
-    from ..supabase_client import (create_patient, get_all_patients, get_patient,
-                                    update_patient, discharge_patient, archive_patient,
-                                    get_appointments_for_patient, get_bills_for_patient,
-                                    search_patients)
-    return (create_patient, get_all_patients, get_patient, update_patient,
-            discharge_patient, archive_patient, get_appointments_for_patient,
-            get_bills_for_patient, search_patients)
 
 @patients_bp.route("/")
 @login_required
@@ -19,12 +11,18 @@ def list_patients():
     from ..supabase_client import get_all_patients, search_patients
     q = request.args.get("q", "").strip()
     try:
-        result = search_patients(q).data if q else get_all_patients().data or []
+        if q:
+            result = search_patients(q).data or []
+        else:
+            result = get_all_patients().data or []
     except Exception:
         result = []
         flash("Could not load patients.", "danger")
-    return render_template("patients/list.html", patients=result,
-                           user=get_current_user(), query=q)
+    return render_template("patients/list.html",
+                           patients=result,
+                           user=get_current_user(),
+                           query=q)
+
 
 @patients_bp.route("/register", methods=["GET", "POST"])
 @login_required
@@ -44,16 +42,18 @@ def register():
         )
         try:
             create_patient(patient.to_dict())
-            flash(f"Patient {patient.name} registered successfully.", "success")
+            flash("Patient registered successfully.", "success")
             return redirect(url_for("patients.list_patients"))
         except Exception as e:
             flash(f"Registration failed: {str(e)}", "danger")
     return render_template("patients/register.html", user=get_current_user())
 
+
 @patients_bp.route("/<patient_id>")
 @login_required
 def detail(patient_id):
-    from ..supabase_client import get_patient, get_appointments_for_patient, get_bills_for_patient
+    from ..supabase_client import (get_patient, get_appointments_for_patient,
+                                    get_bills_for_patient)
     try:
         patient      = get_patient(patient_id).data
         appointments = get_appointments_for_patient(patient_id).data or []
@@ -61,9 +61,12 @@ def detail(patient_id):
     except Exception:
         flash("Patient not found.", "danger")
         return redirect(url_for("patients.list_patients"))
-    return render_template("patients/detail.html", patient=patient,
-                           appointments=appointments, bills=bills,
+    return render_template("patients/detail.html",
+                           patient=patient,
+                           appointments=appointments,
+                           bills=bills,
                            user=get_current_user())
+
 
 @patients_bp.route("/<patient_id>/discharge", methods=["POST"])
 @login_required
@@ -76,6 +79,7 @@ def discharge(patient_id):
         flash(f"Error: {str(e)}", "danger")
     return redirect(url_for("patients.detail", patient_id=patient_id))
 
+
 @patients_bp.route("/<patient_id>/archive", methods=["POST"])
 @login_required
 def archive(patient_id):
@@ -87,6 +91,7 @@ def archive(patient_id):
         flash(f"Error: {str(e)}", "danger")
     return redirect(url_for("patients.list_patients"))
 
+
 @patients_bp.route("/<patient_id>/update-history", methods=["POST"])
 @login_required
 def update_history(patient_id):
@@ -97,4 +102,4 @@ def update_history(patient_id):
         flash("Medical history updated.", "success")
     except Exception as e:
         flash(f"Error: {str(e)}", "danger")
-    return redirect(url_for("patients.detail",
+    return redirect(url_for("patients.detail", patient_id=patient_id))
