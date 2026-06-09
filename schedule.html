@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Schedule Appointment{% endblock %}
+{% block nav_appointments %}active{% endblock %}
+{% block topbar_title %}Schedule Appointment{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Schedule Appointment</h1><p>Assign a doctor to a patient for a visit</p></div>
+  <a href="/appointments" class="btn btn-ghost">← Back</a>
+</div>
+<div class="card" style="max-width:600px">
+  <form method="post" novalidate>
+    <p class="card-title">Appointment Details</p>
+    <div class="fg">
+      <label>Patient</label>
+      <select name="patient_id" required>
+        <option value="">-- Select Patient --</option>
+        {% for p in patients %}
+          {% if p.status == 'Admitted' %}
+          <option value="{{ p.patient_id }}">{{ p.name }} ({{ p.patient_id }})</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="fg">
+      <label>Doctor</label>
+      <select name="doctor_id" required>
+        <option value="">-- Select Doctor --</option>
+        {% for d in doctors %}
+          <option value="{{ d.doctor_id }}">Dr. {{ d.name }} — {{ d.specialisation }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-grid-2">
+      <div class="fg"><label>Date</label><input type="date" name="date" required/></div>
+      <div class="fg"><label>Time</label><input type="time" name="time" required/></div>
+    </div>
+    <div class="fg"><label>Reason for Visit</label><input type="text" name="reason" placeholder="e.g. Follow-up consultation, chest pain…" required/></div>
+    <div style="display:flex;gap:.8rem;margin-top:.5rem">
+      <button type="submit" class="btn btn-navy">Schedule</button>
+      <a href="/appointments" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block topbar_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Good day, {{ user.full_name }} 👋</h1>
+    <p>Here's what's happening in the hospital today.</p>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-grid">
+  <div class="stat accent">
+    <div class="val">{{ stats.get('total_patients', 0) }}</div>
+    <div class="lbl">Total Patients</div>
+  </div>
+  <div class="stat green">
+    <div class="val">{{ stats.get('admitted', 0) }}</div>
+    <div class="lbl">Admitted</div>
+  </div>
+  <div class="stat">
+    <div class="val">{{ stats.get('discharged', 0) }}</div>
+    <div class="lbl">Discharged</div>
+  </div>
+  <div class="stat">
+    <div class="val">{{ stats.get('total_doctors', 0) }}</div>
+    <div class="lbl">Doctors</div>
+  </div>
+  <div class="stat">
+    <div class="val">{{ stats.get('appointments', 0) }}</div>
+    <div class="lbl">Appointments</div>
+  </div>
+  <div class="stat red">
+    <div class="val">{{ stats.get('queue_size', 0) }}</div>
+    <div class="lbl">Emergency Queue</div>
+  </div>
+  <div class="stat accent">
+    <div class="val">{{ stats.get('unpaid_bills', 0) }}</div>
+    <div class="lbl">Unpaid Bills</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;flex-wrap:wrap">
+
+  <!-- RECENT PATIENTS -->
+  <div class="card">
+    <p class="card-title">Recent Patients</p>
+    {% if recent_patients %}
+      <table class="tbl">
+        <thead><tr><th>Name</th><th>ID</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for p in recent_patients %}
+          <tr>
+            <td><a href="/patients/{{ p.patient_id }}">{{ p.name }}</a></td>
+            <td class="text-muted">{{ p.patient_id }}</td>
+            <td><span class="badge b-{{ p.status|lower }}">{{ p.status }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="mt-2"><a href="/patients" class="btn btn-ghost btn-sm">View All</a></div>
+    {% else %}
+      <div class="empty"><span class="ei">🧑‍⚕️</span>No patients yet</div>
+    {% endif %}
+  </div>
+
+  <!-- EMERGENCY QUEUE -->
+  <div class="card">
+    <p class="card-title">🚨 Emergency Queue</p>
+    {% if emergency_entries %}
+      <table class="tbl">
+        <thead><tr><th>Patient</th><th>Priority</th><th>Reason</th></tr></thead>
+        <tbody>
+          {% for e in emergency_entries %}
+          <tr>
+            <td>{{ e.patients.name if e.patients else e.patient_id }}</td>
+            <td>
+              {% if e.priority == 'EMERGENCY' %}<span class="badge b-emergency">🔴 Emergency</span>
+              {% elif e.priority == 'URGENT' %}<span class="badge b-urgent">🟡 Urgent</span>
+              {% else %}<span class="badge b-normal">🟢 Normal</span>{% endif %}
+            </td>
+            <td class="text-muted">{{ e.reason[:30] }}...</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="mt-2"><a href="/emergency" class="btn btn-ghost btn-sm">View Queue</a></div>
+    {% else %}
+      <div class="empty"><span class="ei">✅</span>Queue is empty</div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- QUICK ACTIONS -->
+<div class="card mt-3">
+  <p class="card-title">Quick Actions</p>
+  <div style="display:flex;gap:.8rem;flex-wrap:wrap">
+    <a href="/patients/register"   class="btn btn-navy">➕ Register Patient</a>
+    <a href="/appointments/schedule" class="btn btn-gold">📅 Schedule Appointment</a>
+    <a href="/emergency/add"       class="btn btn-danger" style="background:#8b1a1a">🚨 Add to Emergency Queue</a>
+    <a href="/billing/create"      class="btn btn-ghost">💳 Create Bill</a>
+    <a href="/doctors/add"         class="btn btn-ghost">👨‍⚕️ Add Doctor</a>
+  </div>
+</div>
+{% endblock %}

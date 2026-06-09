@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Emergency Queue{% endblock %}
+{% block nav_emergency %}active{% endblock %}
+{% block topbar_title %}Emergency Queue{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>🚨 Emergency Queue</h1>
+    <p>{{ entries|length }} patient{{ 's' if entries|length != 1 }} waiting — sorted by priority level (OOP min-heap)</p>
+  </div>
+  <a href="/emergency/add" class="btn btn-danger" style="background:#8b1a1a">+ Add to Queue</a>
+</div>
+
+<div class="card">
+  {% if entries %}
+  <table class="tbl">
+    <thead>
+      <tr><th>#</th><th>Patient</th><th>Priority</th><th>Reason</th><th>Arrived</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      {% for i, e in entries|enumerate %}
+      <tr>
+        <td><strong style="font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--navy)">{{ loop.index }}</strong></td>
+        <td><strong>{{ e.patients.name if e.patients else e.patient_id }}</strong></td>
+        <td>
+          {% if e.priority == 'EMERGENCY' %}
+            <span class="badge b-emergency">🔴 Emergency</span>
+          {% elif e.priority == 'URGENT' %}
+            <span class="badge b-urgent">🟡 Urgent</span>
+          {% else %}
+            <span class="badge b-normal">🟢 Normal</span>
+          {% endif %}
+        </td>
+        <td>{{ e.reason }}</td>
+        <td class="text-muted" style="font-size:.82rem">{{ e.arrived_at[:16].replace('T',' ') }}</td>
+        <td>
+          <form method="post" action="/emergency/remove/{{ e.patient_id }}">
+            <button type="submit" class="btn btn-ghost btn-sm">✓ Attended</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="empty"><span class="ei">✅</span>Emergency queue is empty.<br>No patients waiting.</div>
+  {% endif %}
+</div>
+{% endblock %}

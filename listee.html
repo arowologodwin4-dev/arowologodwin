@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Billing{% endblock %}
+{% block nav_billing %}active{% endblock %}
+{% block topbar_title %}Billing{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Billing</h1><p>{{ bills|length }} bill{{ 's' if bills|length != 1 }} on record</p></div>
+  <a href="/billing/create" class="btn btn-navy">💳 Create Bill</a>
+</div>
+<div class="card">
+  {% if bills %}
+  <div style="overflow-x:auto">
+    <table class="tbl">
+      <thead><tr><th>Bill ID</th><th>Patient</th><th>Total (₦)</th><th>Status</th><th>Date</th><th></th></tr></thead>
+      <tbody>
+        {% for b in bills %}
+        <tr>
+          <td style="font-family:monospace;font-size:.8rem">{{ b.bill_id }}</td>
+          <td><strong>{{ b.patients.name if b.patients else b.patient_id }}</strong></td>
+          <td><strong>{{ "{:,.2f}".format(b.total or 0) }}</strong></td>
+          <td><span class="badge {% if b.paid %}b-paid{% else %}b-unpaid{% endif %}">{{ 'Paid' if b.paid else 'Unpaid' }}</span></td>
+          <td>{{ b.created_at[:10] }}</td>
+          <td><a href="/billing/{{ b.bill_id }}" class="btn btn-ghost btn-sm">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="empty"><span class="ei">💳</span>No bills yet.<br/><a href="/billing/create" class="btn btn-navy mt-2">Create First Bill</a></div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up — Hospital Management System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --navy:#0b1d35; --navy-lit:#1a4a82; --gold:#c8922a; --white:#fff;
+            --border:#e2ddd6; --red:#991b1b; --red-bg:#fee2e2; --r:8px; --r-lg:14px;
+            --shadow-lg:0 12px 36px rgba(0,0,0,.14); }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'DM Sans',sans-serif; background:var(--navy); min-height:100vh;
+           display:flex; align-items:center; justify-content:center; padding:2rem 1rem; }
+    .shell { width:100%; max-width:500px; animation:up .35s ease both; }
+    @keyframes up { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+    .card { background:var(--white); border-radius:var(--r-lg); box-shadow:var(--shadow-lg); overflow:hidden; }
+    .head { background:linear-gradient(135deg,#0b1d35 0%,#1a4a82 100%);
+            padding:1.7rem 2rem; text-align:center; }
+    .head h1 { font-family:'Syne',sans-serif; font-size:1.25rem; color:#fff; margin-bottom:.15rem; }
+    .head p  { font-size:.8rem; color:rgba(255,255,255,.6); }
+    .body { padding:1.8rem; }
+    .sec { font-family:'Syne',sans-serif; font-size:.68rem; font-weight:700; letter-spacing:.12em;
+           text-transform:uppercase; color:var(--navy-lit); display:flex; align-items:center;
+           gap:.5rem; margin:.8rem 0 .7rem; }
+    .sec::after { content:''; flex:1; height:1px; background:var(--border); }
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+    .fg { margin-bottom:.85rem; }
+    .fg label { display:block; font-size:.72rem; font-weight:600; color:#374151;
+                margin-bottom:.25rem; text-transform:uppercase; letter-spacing:.05em; }
+    .fg input, .fg select { width:100%; padding:.6rem .88rem; border:1.5px solid var(--border);
+                border-radius:var(--r); font-size:.92rem; font-family:'DM Sans',sans-serif;
+                outline:none; transition:border-color .18s; }
+    .fg input:focus, .fg select:focus { border-color:var(--navy-lit); }
+    .btn { width:100%; padding:.78rem; border:none; border-radius:var(--r);
+           background:var(--navy); color:#fff; font-family:'Syne',sans-serif;
+           font-weight:700; font-size:.92rem; cursor:pointer; margin-top:.4rem;
+           transition:background .18s; }
+    .btn:hover { background:var(--navy-lit); }
+    .foot { text-align:center; padding:1rem; border-top:1px solid var(--border);
+            font-size:.84rem; color:#6b7280; background:#fafaf8; }
+    .foot a { color:var(--navy-lit); font-weight:600; }
+    .flashes { list-style:none; margin-bottom:.8rem; }
+    .flashes li { padding:.6rem .9rem; border-radius:var(--r); font-size:.84rem;
+                  border-left:4px solid transparent; margin-bottom:.3rem; }
+    .flashes .danger { background:var(--red-bg); border-color:#dc2626; color:var(--red); }
+    @media(max-width:500px){ .grid-2{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <div class="card">
+    <div class="head">
+      <h1>🏥 Create Staff Account</h1>
+      <p>Register your hospital staff profile</p>
+    </div>
+    <div class="body">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class="flashes">{% for c,m in messages %}<li class="{{ c }}">{{ m }}</li>{% endfor %}</ul>
+        {% endif %}
+      {% endwith %}
+      <form method="post" novalidate>
+        <p class="sec">Personal Info</p>
+        <div class="grid-2">
+          <div class="fg"><label>Full Name</label><input type="text" name="full_name" placeholder="Dr. Amaka Osei" required/></div>
+          <div class="fg"><label>Role</label>
+            <select name="role">
+              <option value="admin">Admin</option>
+              <option value="doctor">Doctor</option>
+              <option value="nurse">Nurse</option>
+              <option value="staff" selected>Staff</option>
+            </select>
+          </div>
+        </div>
+        <p class="sec">Account</p>
+        <div class="fg"><label>Email Address</label><input type="email" name="email" placeholder="you@hospital.ng" required/></div>
+        <div class="grid-2">
+          <div class="fg"><label>Password</label><input type="password" name="password" placeholder="Min 6 characters" required/></div>
+          <div class="fg"><label>Confirm Password</label><input type="password" name="confirm_password" placeholder="Repeat password" required/></div>
+        </div>
+        <button type="submit" class="btn">Create Account &rarr;</button>
+      </form>
+    </div>
+    <div class="foot">Already have an account? <a href="/login">Login</a></div>
+  </div>
+</div>
+</body>
+</html>

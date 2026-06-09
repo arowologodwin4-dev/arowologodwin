@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Patients{% endblock %}
+{% block nav_patients %}active{% endblock %}
+{% block topbar_title %}Patient Records{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>All Patients</h1><p>{{ patients|length }} record{{ 's' if patients|length != 1 }}</p></div>
+  <a href="/patients/register" class="btn btn-navy">➕ Register Patient</a>
+</div>
+
+<div class="card mb-2">
+  <form method="get" style="display:flex;gap:.8rem;align-items:flex-end">
+    <div class="fg" style="flex:1;margin:0">
+      <label>Search by Name</label>
+      <input type="text" name="q" value="{{ query }}" placeholder="Type patient name…"/>
+    </div>
+    <button type="submit" class="btn btn-navy btn-sm">Search</button>
+    {% if query %}<a href="/patients" class="btn btn-ghost btn-sm">Clear</a>{% endif %}
+  </form>
+</div>
+
+<div class="card">
+  {% if patients %}
+  <div style="overflow-x:auto">
+    <table class="tbl">
+      <thead>
+        <tr><th>Patient ID</th><th>Name</th><th>Age</th><th>Gender</th><th>Blood Type</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for p in patients %}
+        <tr>
+          <td class="text-muted" style="font-family:monospace;font-size:.82rem">{{ p.patient_id }}</td>
+          <td><strong><a href="/patients/{{ p.patient_id }}">{{ p.name }}</a></strong></td>
+          <td>{{ p.age }}</td>
+          <td>{{ p.gender }}</td>
+          <td><span class="badge b-normal">{{ p.blood_type }}</span></td>
+          <td><span class="badge b-{{ p.status|lower }}">{{ p.status }}</span></td>
+          <td style="display:flex;gap:.4rem">
+            <a href="/patients/{{ p.patient_id }}" class="btn btn-ghost btn-sm">View</a>
+            {% if p.status == 'Admitted' %}
+            <form method="post" action="/patients/{{ p.patient_id }}/discharge" style="display:inline">
+              <button type="submit" class="btn btn-green btn-sm">Discharge</button>
+            </form>
+            {% endif %}
+            {% if p.status == 'Discharged' %}
+            <form method="post" action="/patients/{{ p.patient_id }}/archive" style="display:inline">
+              <button type="submit" class="btn btn-danger btn-sm">Archive</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="empty"><span class="ei">🧑‍⚕️</span>No patients found.<br/><a href="/patients/register" class="btn btn-navy mt-2">Register First Patient</a></div>
+  {% endif %}
+</div>
+{% endblock %}

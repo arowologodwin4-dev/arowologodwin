@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Create Bill{% endblock %}
+{% block nav_billing %}active{% endblock %}
+{% block topbar_title %}Create Bill{% endblock %}
+
+{% block extra_css %}
+.service-card { border:1.5px solid var(--border); border-radius:var(--r); padding:1rem; transition:border-color .18s, background .18s; cursor:pointer; }
+.service-card:has(input[type=checkbox]:checked) { border-color:var(--navy-lit); background:#eef3fb; }
+.service-toggle { display:flex; align-items:center; gap:.6rem; font-weight:600; font-size:.92rem; cursor:pointer; }
+.service-toggle input { width:16px; height:16px; accent-color:var(--navy); }
+.service-detail { display:none; margin-top:.8rem; padding-top:.8rem; border-top:1px solid var(--border); }
+.service-card:has(input[type=checkbox]:checked) .service-detail { display:block; }
+.rate-note { font-size:.78rem; color:var(--muted); margin-top:.2rem; }
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div><h1>Create Bill</h1><p>Select services rendered — each item is calculated by its own rule (OOP polymorphism)</p></div>
+  <a href="/billing" class="btn btn-ghost">← Back</a>
+</div>
+<div class="card" style="max-width:680px">
+  <form method="post" novalidate>
+    <p class="card-title">Select Patient</p>
+    <div class="fg">
+      <label>Patient</label>
+      <select name="patient_id" required>
+        <option value="">-- Select Patient --</option>
+        {% for p in patients %}
+          <option value="{{ p.patient_id }}">{{ p.name }} ({{ p.patient_id }}) — {{ p.status }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="divider"></div>
+    <p class="card-title">Services (check all that apply)</p>
+    <div style="display:grid;gap:.8rem">
+
+      <!-- CONSULTATION -->
+      <div class="service-card">
+        <label class="service-toggle">
+          <input type="checkbox" name="consultation"/> Consultation Fee
+          <span class="rate-note">₦5,000 per session</span>
+        </label>
+        <div class="service-detail">
+          <div class="fg" style="margin:0"><label>Number of Consultations</label><input type="number" name="consultation_qty" value="1" min="1"/></div>
+        </div>
+      </div>
+
+      <!-- WARD -->
+      <div class="service-card">
+        <label class="service-toggle">
+          <input type="checkbox" name="ward"/> Ward / Bed Charge
+          <span class="rate-note">₦8,000 per day</span>
+        </label>
+        <div class="service-detail">
+          <div class="fg" style="margin:0"><label>Number of Days</label><input type="number" name="ward_days" value="1" min="1"/></div>
+        </div>
+      </div>
+
+      <!-- LABORATORY -->
+      <div class="service-card">
+        <label class="service-toggle">
+          <input type="checkbox" name="lab"/> Laboratory Test
+          <span class="rate-note">₦3,500 per test</span>
+        </label>
+        <div class="service-detail">
+          <div class="form-grid-2">
+            <div class="fg" style="margin:0"><label>Test Name</label><input type="text" name="lab_test_name" placeholder="e.g. Full Blood Count"/></div>
+            <div class="fg" style="margin:0"><label>Quantity</label><input type="number" name="lab_qty" value="1" min="1"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEDICATION -->
+      <div class="service-card">
+        <label class="service-toggle">
+          <input type="checkbox" name="medication"/> Medication
+        </label>
+        <div class="service-detail">
+          <div class="form-grid-3">
+            <div class="fg" style="margin:0"><label>Medication Name</label><input type="text" name="med_name" placeholder="e.g. Amoxicillin"/></div>
+            <div class="fg" style="margin:0"><label>Unit Price (₦)</label><input type="number" name="med_unit_price" placeholder="500" min="0" step="0.01"/></div>
+            <div class="fg" style="margin:0"><label>Quantity</label><input type="number" name="med_qty" value="1" min="1"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SURGERY -->
+      <div class="service-card">
+        <label class="service-toggle">
+          <input type="checkbox" name="surgery"/> Surgery
+        </label>
+        <div class="service-detail">
+          <div class="form-grid-2">
+            <div class="fg" style="margin:0"><label>Surgery Type</label><input type="text" name="surgery_name" placeholder="e.g. Appendectomy"/></div>
+            <div class="fg" style="margin:0"><label>Cost (₦)</label><input type="number" name="surgery_cost" placeholder="150000" min="0" step="0.01"/></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;gap:.8rem;margin-top:1.5rem">
+      <button type="submit" class="btn btn-navy">Generate Bill</button>
+      <a href="/billing" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

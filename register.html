@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Register Patient{% endblock %}
+{% block nav_register %}active{% endblock %}
+{% block topbar_title %}Register New Patient{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Register Patient</h1><p>Fill in the patient's personal and medical information</p></div>
+  <a href="/patients" class="btn btn-ghost">← Back</a>
+</div>
+<div class="card" style="max-width:680px">
+  <form method="post" novalidate>
+    <p class="card-title">Personal Information</p>
+    <div class="form-grid-2">
+      <div class="fg"><label>Full Name</label><input type="text" name="name" placeholder="e.g. Chinwe Okonkwo" required/></div>
+      <div class="fg"><label>Age</label><input type="number" name="age" placeholder="e.g. 34" min="0" max="150" required/></div>
+    </div>
+    <div class="form-grid-2">
+      <div class="fg">
+        <label>Gender</label>
+        <select name="gender" required>
+          <option value="">-- Select --</option>
+          <option>Male</option><option>Female</option><option>Other</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Blood Type</label>
+        <select name="blood_type" required>
+          <option value="">-- Select --</option>
+          <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Contact Number</label><input type="text" name="contact" placeholder="e.g. 08012345678" required/></div>
+    <div class="divider"></div>
+    <p class="card-title">Medical History</p>
+    <div class="fg">
+      <label>Medical History / Notes</label>
+      <textarea name="medical_history" placeholder="Enter any existing conditions, allergies, previous diagnoses, medications…"></textarea>
+    </div>
+    <div style="display:flex;gap:.8rem;margin-top:.5rem">
+      <button type="submit" class="btn btn-navy">Register Patient</button>
+      <a href="/patients" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

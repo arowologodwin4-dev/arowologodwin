@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Doctors{% endblock %}
+{% block nav_doctors %}active{% endblock %}
+{% block topbar_title %}Doctors{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h1>Doctors</h1><p>{{ doctors|length }} doctor{{ 's' if doctors|length != 1 }} on staff</p></div>
+  <a href="/doctors/add" class="btn btn-navy">➕ Add Doctor</a>
+</div>
+<div class="card">
+  {% if doctors %}
+  <table class="tbl">
+    <thead><tr><th>ID</th><th>Name</th><th>Specialisation</th><th>Contact</th></tr></thead>
+    <tbody>
+      {% for d in doctors %}
+      <tr>
+        <td class="text-muted" style="font-family:monospace;font-size:.82rem">{{ d.doctor_id }}</td>
+        <td><strong>Dr. {{ d.name }}</strong></td>
+        <td>{{ d.specialisation }}</td>
+        <td>{{ d.contact }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="empty"><span class="ei">👨‍⚕️</span>No doctors added yet.<br/><a href="/doctors/add" class="btn btn-navy mt-2">Add First Doctor</a></div>
+  {% endif %}
+</div>
+{% endblock %}
